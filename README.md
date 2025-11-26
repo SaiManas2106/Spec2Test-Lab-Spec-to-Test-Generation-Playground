@@ -1,4 +1,3 @@
-````markdown
 # Spec2Test Lab – Spec-to-Test Generation Playground
 
 Spec2Test Lab is a small Python playground for **spec-driven test generation**.  
@@ -38,13 +37,11 @@ spec2test_lab/
 
   tests/
     test_pipeline_smoke.py
-````
 
-## Getting started
-
+-------------------------------------------------------------------------- 
+Getting started
 From the project root:
 
-```bash
 # 1. Create and activate virtual environment
 python -m venv .venv
 
@@ -59,15 +56,15 @@ pip install -r requirements.txt
 
 # 3. Run the playground
 python run_spec2test.py
-```
-
 You’ll see a table showing, for each task:
 
-* whether tests pass on the canonical implementation, and
-* for each buggy implementation, whether the tests caught the bug.
+whether tests pass on the canonical implementation, and
 
-## Extending
+for each buggy implementation, whether the tests caught the bug.
 
-* Add new tasks in `spec2test/tasks.py` with more specs and buggy implementations.
-* Implement a new provider in `spec2test/model_providers.py` that calls a small LLM or other test generator.
-* Use the existing evaluator as a base for deeper experiments with **AI-assisted testing**.
+Extending
+Add new tasks in spec2test/tasks.py with more specs and buggy implementations.
+
+Implement a new provider in spec2test/model_providers.py that calls a small LLM or other test generator.
+
+Use the existing evaluator as a base for deeper experiments with AI-assisted testing.
