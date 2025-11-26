@@ -1,28 +1,73 @@
+````markdown
 # Spec2Test Lab – Spec-to-Test Generation Playground
 
-Spec2Test Lab is a small **developer playground** for experimenting with
-AI-style **test generation** from simple function specifications.
+Spec2Test Lab is a small Python playground for **spec-driven test generation**.  
+It takes simple function specifications, uses an agent to turn them into pytest suites, and runs those tests against both **correct** and **buggy** implementations to show where tests catch or miss bugs. The design makes it easy to later plug in **small LLM-based test generators** instead of the dummy provider.
 
-The idea:
+## Features
 
-- Define a few small function specs (katas).
-- For each spec, an **agent** proposes a set of pytest tests.
-- The lab runs those tests against:
-  - a **correct** implementation and
-  - a couple of intentionally **buggy** implementations,
-  and shows which bugs the tests manage to catch.
+- `TestTask` objects with:
+  - natural-language spec,
+  - function name,
+  - canonical implementation,
+  - multiple buggy implementations.
+- `DummyTestProvider`:
+  - returns hand-written pytest tests (no external APIs needed).
+- `SpecToTestAgent`:
+  - wraps a provider and generates tests for each task.
+- Evaluation pipeline:
+  - tests must pass on the canonical implementation,
+  - tests are run against buggy implementations to see which bugs are caught.
+- Rich CLI output:
+  - table view of each task and buggy implementation, with ✅/❌ status.
 
-Right now the project ships with a **DummyTestProvider** that returns
-hand-written tests so everything runs locally with no API keys.
-In a thesis setting, this provider can be replaced with a real **small,
-specialized model** (e.g., a local code model that generates tests from a spec).
+## Project structure
 
-This project sits in the *same ecosystem* as a thesis on
-“evaluation of AI-driven code and test generation agents”, but it is **not**
-a research evaluation framework. It is a lightweight **sandbox** that
-demonstrates:
+```text
+spec2test_lab/
+  README.md
+  requirements.txt
+  run_spec2test.py        # CLI entrypoint
 
-- a clean abstraction for spec-to-test agents,
-- automated execution of generated tests,
-- the basic idea of “do my tests actually catch bugs?”,
-- extensible Python structure suitable for plugging in real models later.
+  spec2test/
+    __init__.py
+    tasks.py              # TestTask definitions + implementations
+    model_providers.py    # BaseTestProvider + DummyTestProvider
+    test_agent.py         # SpecToTestAgent
+    evaluator.py          # Evaluation logic
+
+  tests/
+    test_pipeline_smoke.py
+````
+
+## Getting started
+
+From the project root:
+
+```bash
+# 1. Create and activate virtual environment
+python -m venv .venv
+
+# Windows (PowerShell)
+.venv\Scripts\Activate.ps1
+
+# macOS / Linux
+source .venv/bin/activate
+
+# 2. Install dependencies
+pip install -r requirements.txt
+
+# 3. Run the playground
+python run_spec2test.py
+```
+
+You’ll see a table showing, for each task:
+
+* whether tests pass on the canonical implementation, and
+* for each buggy implementation, whether the tests caught the bug.
+
+## Extending
+
+* Add new tasks in `spec2test/tasks.py` with more specs and buggy implementations.
+* Implement a new provider in `spec2test/model_providers.py` that calls a small LLM or other test generator.
+* Use the existing evaluator as a base for deeper experiments with **AI-assisted testing**.
